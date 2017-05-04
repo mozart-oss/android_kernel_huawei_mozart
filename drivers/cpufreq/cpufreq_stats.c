@@ -772,7 +772,7 @@ static int __init cpufreq_stats_init(void)
 		return ret;
 
 	register_hotcpu_notifier(&cpufreq_stat_cpu_notifier);
-    create_all_freq_table();
+	create_all_freq_table();
 	for_each_online_cpu(cpu) {
 		cpufreq_update_policy(cpu);
 		cpufreq_stats_create_table(cpu);
@@ -786,15 +786,17 @@ static int __init cpufreq_stats_init(void)
 		unregister_hotcpu_notifier(&cpufreq_stat_cpu_notifier);
 		for_each_online_cpu(cpu)
 			cpufreq_stats_free_table(cpu);
-			free_all_freq_table();
+		free_all_freq_table();
 		return ret;
 	}
 
-	ret = cpufreq_sysfs_create_file(&_attr_all_time_in_state.attr);
+	ret = sysfs_create_file(cpufreq_global_kobject,
+			&_attr_all_time_in_state.attr);
 	if (ret)
 		pr_warn("Cannot create sysfs file for cpufreq stats\n");
 
-	ret = cpufreq_sysfs_create_file(&_attr_current_in_state.attr);
+	ret = sysfs_create_file(cpufreq_global_kobject,
+			&_attr_current_in_state.attr);
 	if (ret)
 		pr_warn("Cannot create sysfs file for cpufreq current stats\n");
 
@@ -815,7 +817,7 @@ static void __exit cpufreq_stats_exit(void)
 		cpufreq_stats_free_sysfs(cpu);
 	}
 	cpufreq_allstats_free();
-    cpufreq_powerstats_free();
+	cpufreq_powerstats_free();
 }
 
 MODULE_AUTHOR("Zou Nan hai <nanhai.zou@intel.com>");
